@@ -1,0 +1,25 @@
+{
+  "name": "obsidian-short-phrase-cards",
+  "version": "1.0.0",
+  "description": "Obsidian plugin: render note lines as a masonry card wall",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "node test/parser.test.mjs"
+  },
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "cards",
+    "masonry"
+  ],
+  "author": "lenovo",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.24.0",
+    "obsidian": "^1.7.2",
+    "typescript": "^5.7.2"
+  }
+}
