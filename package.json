@@ -1,6 +1,6 @@
 {
   "name": "obsidian-short-phrase-cards",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Obsidian plugin: split note lines into short phrases and render them as a masonry card wall",
   "main": "main.js",
   "scripts": {
