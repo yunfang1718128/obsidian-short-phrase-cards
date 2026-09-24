@@ -43,29 +43,115 @@
 }
 
 .spc-card {
+  position: relative;
   display: block;
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
   margin: 0 0 12px 0;
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 14px 16px;
+  border-radius: var(--spc-radius, 14px);
+  border: 1px solid transparent;
   background: var(--background-secondary);
-  border: 1px solid var(--background-modifier-border);
+  background: color-mix(
+    in srgb,
+    var(--spc-accent, var(--background-secondary)) var(--spc-tint, 0%),
+    var(--background-secondary)
+  );
   color: var(--text-normal);
   font-size: var(--spc-font-size, 14px);
-  line-height: 1.55;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--spc-shadow, none);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .spc-card:hover {
-  background: var(--background-secondary-alt);
+  transform: translateY(-2px);
+  box-shadow: var(--spc-shadow-hover, var(--spc-shadow, none));
+}
+
+/* 强调色条 */
+.spc-card::before {
+  content: "";
+  position: absolute;
+  background: var(--spc-accent, var(--interactive-accent));
+}
+
+.spc-bar-left .spc-card::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  border-radius: var(--spc-radius, 14px) 0 0 var(--spc-radius, 14px);
+}
+
+.spc-bar-top .spc-card::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--spc-radius, 14px) var(--spc-radius, 14px) 0 0;
+}
+
+.spc-bar-none .spc-card::before {
+  display: none;
+}
+
+/* 风格预设 */
+.spc-style-classic .spc-card {
+  border-color: var(--background-modifier-border);
+}
+
+.spc-style-sticky .spc-card {
+  border-radius: calc(var(--spc-radius, 14px) + 2px);
+}
+
+/* 阴影强度 */
+.spc-shadow-none {
+  --spc-shadow: none;
+  --spc-shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+.spc-shadow-soft {
+  --spc-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --spc-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.08), 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+.spc-shadow-medium {
+  --spc-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.08);
+  --spc-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.1), 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+.spc-shadow-strong {
+  --spc-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 10px 28px rgba(0, 0, 0, 0.16);
+  --spc-shadow-hover: 0 6px 14px rgba(0, 0, 0, 0.14), 0 18px 40px rgba(0, 0, 0, 0.26);
+}
+
+/* 入场动画：用独立的 translate 属性，避免与 hover 的 transform 冲突 */
+@keyframes spc-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.spc-anim .spc-card {
+  animation: spc-in 0.34s ease both;
+  animation-delay: calc(var(--spc-i, 0) * 18ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spc-anim .spc-card {
+    animation: none;
+  }
 }
 
 .spc-empty {
   color: var(--text-muted);
-  padding: 24px;
+  padding: 32px 24px;
+  text-align: center;
   column-span: all;
 }

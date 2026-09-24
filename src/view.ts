@@ -4,6 +4,20 @@ import { parsePhrases } from "./parser";
 
 export const VIEW_TYPE_SHORT_PHRASE_CARDS = "short-phrase-cards-view";
 
+/** 精选调色板：每张卡片循环取色（HSL） */
+const CARD_PALETTE = [
+  { h: 212, s: 62, l: 56 }, // 蓝
+  { h: 174, s: 55, l: 44 }, // 青
+  { h: 262, s: 55, l: 62 }, // 紫
+  { h: 330, s: 60, l: 60 }, // 粉
+  { h: 24, s: 72, l: 54 }, // 橙
+  { h: 43, s: 68, l: 50 }, // 琥珀
+  { h: 150, s: 46, l: 44 }, // 绿
+];
+
+/** 动画延迟的索引上限，避免卡片过多时等待过久 */
+const MAX_ANIM_INDEX = 40;
+
 export interface ShortPhraseCardsViewState {
   file?: string;
 }
@@ -73,8 +87,27 @@ export class ShortPhraseCardsView extends ItemView {
 
   applyStyleVars(): void {
     if (!this.wallEl) return;
-    this.wallEl.style.setProperty("--spc-card-width", `${this.plugin.settings.cardWidth}px`);
-    this.wallEl.style.setProperty("--spc-font-size", `${this.plugin.settings.fontSize}px`);
+    const s = this.plugin.settings;
+    const wall = this.wallEl;
+    wall.style.setProperty("--spc-card-width", `${s.cardWidth}px`);
+    wall.style.setProperty("--spc-font-size", `${s.fontSize}px`);
+    wall.style.setProperty("--spc-radius", `${s.cardRadius}px`);
+    wall.style.setProperty("--spc-tint", `${s.cardColorMode === "none" ? 0 : s.cardTint}%`);
+
+    wall.toggleClass("spc-style-paper", s.cardStyle === "paper");
+    wall.toggleClass("spc-style-classic", s.cardStyle === "classic");
+    wall.toggleClass("spc-style-sticky", s.cardStyle === "sticky");
+
+    wall.toggleClass("spc-bar-none", s.cardAccentBar === "none");
+    wall.toggleClass("spc-bar-left", s.cardAccentBar === "left");
+    wall.toggleClass("spc-bar-top", s.cardAccentBar === "top");
+
+    wall.toggleClass("spc-shadow-none", s.cardShadow === "none");
+    wall.toggleClass("spc-shadow-soft", s.cardShadow === "soft");
+    wall.toggleClass("spc-shadow-medium", s.cardShadow === "medium");
+    wall.toggleClass("spc-shadow-strong", s.cardShadow === "strong");
+
+    wall.toggleClass("spc-anim", s.cardAnimation);
   }
 
   async render(): Promise<void> {
@@ -126,12 +159,20 @@ export class ShortPhraseCardsView extends ItemView {
     }
 
     const fragment = document.createDocumentFragment();
-    for (const phrase of phrases) {
+    const colorMode = this.plugin.settings.cardColorMode;
+    phrases.forEach((phrase, index) => {
       const card = document.createElement("div");
       card.className = "spc-card";
       card.textContent = phrase;
+      card.style.setProperty("--spc-i", String(Math.min(index, MAX_ANIM_INDEX)));
+      if (colorMode === "hue") {
+        const c = CARD_PALETTE[index % CARD_PALETTE.length];
+        card.style.setProperty("--spc-accent", `hsl(${c.h} ${c.s}% ${c.l}%)`);
+      } else if (colorMode === "accent") {
+        card.style.setProperty("--spc-accent", "var(--interactive-accent)");
+      }
       fragment.appendChild(card);
-    }
+    });
     this.wallEl.appendChild(fragment);
   }
 

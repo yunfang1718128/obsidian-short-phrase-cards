@@ -2,6 +2,11 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 import type ShortPhraseCardsPlugin from "./main";
 import type { SplitMode } from "./parser";
 
+export type CardStyle = "paper" | "classic" | "sticky";
+export type CardColorMode = "hue" | "accent" | "none";
+export type CardShadow = "none" | "soft" | "medium" | "strong";
+export type CardAccentBar = "none" | "left" | "top";
+
 export interface ShortPhraseCardsSettings {
   /** frontmatter 中的卡片化标记属性名 */
   markerKey: string;
@@ -21,6 +26,20 @@ export interface ShortPhraseCardsSettings {
   fontSize: number;
   /** 打开被卡片化的笔记时自动进入卡片模式 */
   autoOpenCardView: boolean;
+  /** 卡片风格预设 */
+  cardStyle: CardStyle;
+  /** 卡片配色模式 */
+  cardColorMode: CardColorMode;
+  /** 卡片底色着色强度（0-40，映射为百分比） */
+  cardTint: number;
+  /** 卡片圆角（px） */
+  cardRadius: number;
+  /** 卡片阴影强度 */
+  cardShadow: CardShadow;
+  /** 色条位置 */
+  cardAccentBar: CardAccentBar;
+  /** 卡片入场动画 */
+  cardAnimation: boolean;
 }
 
 export const DEFAULT_SETTINGS: ShortPhraseCardsSettings = {
@@ -33,6 +52,13 @@ export const DEFAULT_SETTINGS: ShortPhraseCardsSettings = {
   cardWidth: 240,
   fontSize: 14,
   autoOpenCardView: true,
+  cardStyle: "paper",
+  cardColorMode: "hue",
+  cardTint: 14,
+  cardRadius: 14,
+  cardShadow: "medium",
+  cardAccentBar: "left",
+  cardAnimation: true,
 };
 
 export class ShortPhraseCardsSettingTab extends PluginSettingTab {
@@ -160,6 +186,112 @@ export class ShortPhraseCardsSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
             this.plugin.refreshCardViews();
           })
+      );
+
+    new Setting(containerEl)
+      .setName("卡片风格")
+      .setDesc("纸卡极简：去边框、靠阴影；经典方框：保留描边；便利贴：更圆润柔和。")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("paper", "纸卡极简")
+          .addOption("classic", "经典方框")
+          .addOption("sticky", "便利贴")
+          .setValue(this.plugin.settings.cardStyle)
+          .onChange(async (value) => {
+            this.plugin.settings.cardStyle = value as CardStyle;
+            await this.plugin.saveSettings();
+            this.plugin.refreshCardViews();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("卡片配色")
+      .setDesc("每卡循环色：每张卡片循环使用不同色相；单一强调色：全部使用主题强调色；主题灰阶：不额外着色。")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("hue", "每卡循环色")
+          .addOption("accent", "单一强调色")
+          .addOption("none", "主题灰阶")
+          .setValue(this.plugin.settings.cardColorMode)
+          .onChange(async (value) => {
+            this.plugin.settings.cardColorMode = value as CardColorMode;
+            await this.plugin.saveSettings();
+            this.plugin.refreshCardViews();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("着色强度")
+      .setDesc("卡片底色的着色浓度，0 表示不着色。")
+      .addSlider((slider) =>
+        slider
+          .setLimits(0, 40, 1)
+          .setValue(this.plugin.settings.cardTint)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.cardTint = value;
+            await this.plugin.saveSettings();
+            this.plugin.refreshCardViews();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("卡片圆角")
+      .setDesc("卡片圆角半径（像素）。")
+      .addSlider((slider) =>
+        slider
+          .setLimits(0, 24, 1)
+          .setValue(this.plugin.settings.cardRadius)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.cardRadius = value;
+            await this.plugin.saveSettings();
+            this.plugin.refreshCardViews();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("卡片阴影")
+      .setDesc("卡片阴影强度。")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("none", "无")
+          .addOption("soft", "轻")
+          .addOption("medium", "中")
+          .addOption("strong", "强")
+          .setValue(this.plugin.settings.cardShadow)
+          .onChange(async (value) => {
+            this.plugin.settings.cardShadow = value as CardShadow;
+            await this.plugin.saveSettings();
+            this.plugin.refreshCardViews();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("卡片色条")
+      .setDesc("在卡片边缘显示一条强调色条。")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("none", "无")
+          .addOption("left", "左侧")
+          .addOption("top", "顶部")
+          .setValue(this.plugin.settings.cardAccentBar)
+          .onChange(async (value) => {
+            this.plugin.settings.cardAccentBar = value as CardAccentBar;
+            await this.plugin.saveSettings();
+            this.plugin.refreshCardViews();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("入场动画")
+      .setDesc("卡片加载时轻微错落淡入。")
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.cardAnimation).onChange(async (value) => {
+          this.plugin.settings.cardAnimation = value;
+          await this.plugin.saveSettings();
+          this.plugin.refreshCardViews();
+        })
       );
   }
 }
