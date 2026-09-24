@@ -3,3 +3,7 @@ dist/
 *.log
 .DS_Store
 .deploy.json
+
+# demo source videos (only the converted GIF is committed)
+*.mp4
+*.mov

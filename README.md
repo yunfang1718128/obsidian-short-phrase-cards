@@ -2,14 +2,13 @@
 
 把笔记按行拆成短句，以纯 CSS 瀑布流「卡片墙」展示的 Obsidian 插件。
 
-<!--
-截图占位：把图片放到 docs/screenshots/ 后，取消下面两行的注释即可。
-
 ![卡片墙](docs/screenshots/cardwall.png)
-![文件管理器右键「卡片化」](docs/screenshots/context-menu.png)
--->
 
-> 📷 截图待补充：`docs/screenshots/cardwall.png`、`docs/screenshots/context-menu.png`
+![文件管理器右键「卡片化」](docs/screenshots/context-menu.png)
+
+![源码视图标题栏的卡片图标](docs/screenshots/edit-toggle.png)
+
+![演示：卡片化 → 卡片墙 → 编辑 → 回卡片墙](docs/screenshots/demo.gif)
 
 ## 功能特性
 
@@ -81,6 +80,8 @@ npm test       # 解析器单元测试
 ---
 
 ## English
+
+![Card wall](docs/screenshots/cardwall.png)
 
 **Short Phrase Cards** turns each line of a note into a short phrase and displays them as a pure-CSS masonry card wall.
 
