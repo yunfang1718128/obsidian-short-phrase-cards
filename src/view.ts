@@ -13,7 +13,8 @@ export class ShortPhraseCardsView extends ItemView {
   filePath: string | null = null;
 
   private wallEl: HTMLElement | null = null;
-  private titleEl: HTMLElement | null = null;
+  /** 注意：不能叫 titleEl，View 基类已有同名属性，会被覆盖成 null 导致打开视图报错 */
+  private barTitleEl: HTMLElement | null = null;
 
   constructor(leaf: WorkspaceLeaf, plugin: ShortPhraseCardsPlugin) {
     super(leaf);
@@ -51,7 +52,7 @@ export class ShortPhraseCardsView extends ItemView {
     root.addClass("spc-view");
 
     const toolbar = root.createDiv({ cls: "spc-toolbar" });
-    this.titleEl = toolbar.createDiv({ cls: "spc-title" });
+    this.barTitleEl = toolbar.createDiv({ cls: "spc-title" });
 
     const editBtn = toolbar.createEl("button", { text: "编辑" });
     editBtn.addClass("spc-btn");
@@ -81,21 +82,34 @@ export class ShortPhraseCardsView extends ItemView {
     this.wallEl.empty();
     this.applyStyleVars();
 
+    try {
+      await this.renderWall();
+    } catch (err) {
+      console.error("[short-phrase-cards] 渲染卡片失败", err);
+      this.wallEl.createDiv({
+        cls: "spc-empty",
+        text: `渲染失败：${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
+  }
+
+  private async renderWall(): Promise<void> {
+    if (!this.wallEl) return;
     const path = this.filePath;
     if (!path) {
-      this.setTitle("短句卡片");
+      this.setBarTitle("短句卡片");
       this.wallEl.createDiv({ cls: "spc-empty", text: "没有指定文件。" });
       return;
     }
 
     const file = this.app.vault.getAbstractFileByPath(path);
     if (!(file instanceof TFile)) {
-      this.setTitle(path);
+      this.setBarTitle(path);
       this.wallEl.createDiv({ cls: "spc-empty", text: `文件不存在：${path}` });
       return;
     }
 
-    this.setTitle(file.basename);
+    this.setBarTitle(file.basename);
 
     const content = await this.app.vault.cachedRead(file);
     const phrases = parsePhrases(content, {
@@ -121,7 +135,7 @@ export class ShortPhraseCardsView extends ItemView {
     this.wallEl.appendChild(fragment);
   }
 
-  private setTitle(text: string): void {
-    if (this.titleEl) this.titleEl.setText(text);
+  private setBarTitle(text: string): void {
+    if (this.barTitleEl) this.barTitleEl.setText(text);
   }
 }

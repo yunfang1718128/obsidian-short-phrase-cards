@@ -5,6 +5,12 @@
   overflow: hidden;
 }
 
+/* 提高优先级，压过 Obsidian 的 .workspace-leaf-content .view-content 内边距与滚动 */
+.workspace-leaf-content .view-content.spc-view {
+  padding: 0;
+  overflow: hidden;
+}
+
 .spc-toolbar {
   display: flex;
   align-items: center;
@@ -28,6 +34,7 @@
 
 .spc-wall {
   flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding: 16px;
   box-sizing: border-box;
