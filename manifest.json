@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "minAppVersion": "1.4.0",
   "description": "把笔记里的短句按行拆分成卡片，以瀑布流方式展示；右键任意 md 文件即可卡片化，标记随文件记忆。",
-  "author": "lenovo",
-  "authorUrl": "",
+  "author": "yunfang1718128",
+  "authorUrl": "https://github.com/yunfang1718128",
   "isDesktopOnly": true
 }
