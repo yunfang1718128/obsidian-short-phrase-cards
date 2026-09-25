@@ -4,11 +4,19 @@
 
 ![卡片墙](docs/screenshots/cardwall.png)
 
+*卡片墙：纯 CSS 瀑布流布局，随窗口宽度自动分列。*
+
 ![文件管理器右键「卡片化」](docs/screenshots/context-menu.png)
+
+*文件管理器右键菜单里的「卡片化」入口。*
 
 ![源码视图标题栏的卡片图标](docs/screenshots/edit-toggle.png)
 
+*源码视图标题栏右上角的卡片图标，一键回到卡片墙。*
+
 ![演示：卡片化 → 卡片墙 → 编辑 → 回卡片墙](docs/screenshots/demo.gif)
+
+*演示：右键卡片化 → 卡片墙浏览 → 进入编辑 → 切回卡片墙。*
 
 ## 功能特性
 
@@ -90,6 +98,8 @@ npm test       # 解析器单元测试
 ## English
 
 ![Card wall](docs/screenshots/cardwall.png)
+
+*Card wall: pure-CSS masonry that reflows to the window width.*
 
 **Short Phrase Cards** turns each line of a note into a short phrase and displays them as a pure-CSS masonry card wall.
 
